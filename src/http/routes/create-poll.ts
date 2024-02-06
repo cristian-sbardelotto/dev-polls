@@ -5,8 +5,8 @@ import { prisma } from '../../lib/prisma';
 import { z } from 'zod';
 
 export async function createPoll(app: FastifyInstance) {
-  app.post('/polls', async (req, rep) => {
-    const { body } = req;
+  app.post('/polls', async (request, reply) => {
+    const { body } = request;
 
     const createPollBody = z.object({
       title: z.string(),
@@ -29,6 +29,6 @@ export async function createPoll(app: FastifyInstance) {
       },
     });
 
-    return rep.status(201).send({ pollId: poll.id });
+    return reply.status(201).send({ pollId: poll.id });
   });
 }
