@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { FastifyInstance } from 'fastify';
 
 import { prisma } from '../../lib/prisma';
@@ -17,6 +19,21 @@ export async function voteOnPoll(app: FastifyInstance) {
     const { pollOptionId } = bodySchema.parse(request.body);
     const { id } = paramsSchema.parse(request.params);
 
-    return reply.status(201).send({});
+    let { sessionId } = request.cookies;
+
+    if (!sessionId) {
+      sessionId = randomUUID();
+
+      const ONE_MONTH_IN_SECONDS = 60 * 60 * 24 * 30;
+
+      reply.setCookie('sessionId', sessionId, {
+        path: '/',
+        maxAge: ONE_MONTH_IN_SECONDS,
+        signed: true,
+        httpOnly: true,
+      });
+    }
+
+    return reply.status(201).send({ sessionId });
   });
 }
