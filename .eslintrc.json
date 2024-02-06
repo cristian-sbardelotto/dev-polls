@@ -14,6 +14,7 @@
   "rules": {
     "indent": ["warn", 2],
     "quotes": ["warn", "single"],
-    "semi": ["warn", "always"]
+    "semi": ["warn", "always"],
+    "@typescript-eslint/no-unused-vars": "warn"
   }
 }

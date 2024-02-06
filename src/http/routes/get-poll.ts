@@ -6,11 +6,11 @@ import { z } from 'zod';
 
 export async function getPoll(app: FastifyInstance) {
   app.get('/polls/:id', async (request, reply) => {
-    const requestSchema = z.object({
+    const paramsSchema = z.object({
       id: z.string().uuid(),
     });
 
-    const { id } = requestSchema.parse(request.params);
+    const { id } = paramsSchema.parse(request.params);
 
     const poll = await prisma.poll.findUnique({
       where: { id },
