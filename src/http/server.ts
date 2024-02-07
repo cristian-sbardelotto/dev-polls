@@ -15,4 +15,6 @@ app.register(createPoll);
 app.register(getPoll);
 app.register(voteOnPoll);
 
-app.listen({ port: 3333 }, () => console.log('listening on port 3333'));
+const PORT = 3333;
+
+app.listen({ port: PORT }, () => console.log(`Server running on port ${PORT}`));
