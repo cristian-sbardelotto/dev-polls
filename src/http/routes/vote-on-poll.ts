@@ -31,19 +31,18 @@ export async function voteOnPoll(app: FastifyInstance) {
         },
       });
 
-      if (
-        userPreviousVotedOnPoll &&
-        userPreviousVotedOnPoll.pollOptionId !== pollOptionId
-      ) {
+      if (userPreviousVotedOnPoll) {
+        if (userPreviousVotedOnPoll.pollOptionId === pollOptionId) {
+          return reply
+            .status(400)
+            .send({ message: 'You already voted on this poll.' });
+        }
+
         await prisma.vote.delete({
           where: {
             id: userPreviousVotedOnPoll.id,
           },
         });
-      } else if (userPreviousVotedOnPoll) {
-        return reply
-          .status(400)
-          .send({ message: 'You already voted on this poll.' });
       }
     }
 
