@@ -5,6 +5,9 @@ import { FastifyInstance } from 'fastify';
 import { prisma } from '../../lib/prisma';
 
 import { z } from 'zod';
+import { redis } from '../../lib/redis';
+
+const VOTES_PER_PERSON = 1;
 
 export async function voteOnPoll(app: FastifyInstance) {
   app.post('/polls/:id/votes', async (request, reply) => {
@@ -43,6 +46,12 @@ export async function voteOnPoll(app: FastifyInstance) {
             id: userPreviousVotedOnPoll.id,
           },
         });
+
+        await redis.zincrby(
+          id,
+          -VOTES_PER_PERSON,
+          userPreviousVotedOnPoll.pollOptionId
+        );
       }
     }
 
@@ -66,6 +75,8 @@ export async function voteOnPoll(app: FastifyInstance) {
         pollOptionId,
       },
     });
+
+    await redis.zincrby(id, VOTES_PER_PERSON, pollOptionId);
 
     return reply.status(201).send();
   });
