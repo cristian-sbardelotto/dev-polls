@@ -7,6 +7,8 @@ import { redis } from '../../lib/redis';
 
 import { z } from 'zod';
 
+import { voting } from '../../utils/voting-pub-sub';
+
 const VOTES_PER_PERSON = 1;
 
 export async function voteOnPoll(app: FastifyInstance) {
@@ -47,11 +49,16 @@ export async function voteOnPoll(app: FastifyInstance) {
           },
         });
 
-        await redis.zincrby(
+        const votes = await redis.zincrby(
           id,
           -VOTES_PER_PERSON,
           userPreviousVotedOnPoll.pollOptionId
         );
+
+        voting.publish(id, {
+          pollOptionId: userPreviousVotedOnPoll.pollOptionId,
+          votes: Number(votes),
+        });
       }
     }
 
@@ -76,7 +83,9 @@ export async function voteOnPoll(app: FastifyInstance) {
       },
     });
 
-    await redis.zincrby(id, VOTES_PER_PERSON, pollOptionId);
+    const votes = await redis.zincrby(id, VOTES_PER_PERSON, pollOptionId);
+
+    voting.publish(id, { pollOptionId, votes: +votes });
 
     return reply.status(201).send();
   });
