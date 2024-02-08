@@ -5,7 +5,7 @@ import { prisma } from '../../lib/prisma';
 import { z } from 'zod';
 
 export async function createPoll(app: FastifyInstance) {
-  app.post('/polls', async (request, reply) => {
+  app.post('/polls/create', async (request, reply) => {
     const bodySchema = z.object({
       title: z.string(),
       options: z.array(z.string()),
