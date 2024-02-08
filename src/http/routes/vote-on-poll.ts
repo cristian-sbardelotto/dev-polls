@@ -3,9 +3,9 @@ import { randomUUID } from 'node:crypto';
 import { FastifyInstance } from 'fastify';
 
 import { prisma } from '../../lib/prisma';
+import { redis } from '../../lib/redis';
 
 import { z } from 'zod';
-import { redis } from '../../lib/redis';
 
 const VOTES_PER_PERSON = 1;
 
